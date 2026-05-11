@@ -45,7 +45,7 @@ export default function OnboardingScreen({ onComplete }) {
     <div className="min-h-svh bg-cream flex flex-col px-5 pt-12 pb-8">
       <div className="mb-8">
         <h1 className="font-display text-4xl text-red font-bold leading-tight">
-          ¡Bienvenidos!
+          ¡Bienvenidos! 🇪🇸
         </h1>
         <p className="text-stone-600 mt-2 text-base">
           Select your name and register your tapa to join the competition.
