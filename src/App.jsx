@@ -1,17 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import BottomNav from './components/BottomNav'
 import OnboardingScreen from './screens/OnboardingScreen'
-
-const PLACEHOLDER_SCREENS = {
-  home: 'HomeScreen',
-  vote: 'VoteScreen',
-  results: 'ResultsScreen',
-}
+import HomeScreen from './screens/HomeScreen'
 
 function PlaceholderScreen({ name }) {
   return (
-    <div className="flex-1 flex items-center justify-center text-stone-400 text-lg font-semibold">
+    <div className="flex-1 flex items-center justify-center text-stone-400 text-lg font-semibold min-h-[60svh]">
       {name} — coming soon
     </div>
   )
@@ -37,6 +32,29 @@ export default function App() {
     return <OnboardingScreen onComplete={handleOnboardingComplete} />
   }
 
+  function renderScreen() {
+    if (screen === 'home') {
+      return (
+        <HomeScreen
+          currentUser={currentUser}
+          onNavigateTapa={(tapaCreator) => navigate('detail', tapaCreator)}
+        />
+      )
+    }
+    if (screen === 'detail') {
+      return <PlaceholderScreen name={`TapaDetail — ${selectedTapa}`} />
+    }
+    if (screen === 'vote') {
+      return <PlaceholderScreen name="VoteScreen" />
+    }
+    if (screen === 'results') {
+      return <PlaceholderScreen name="ResultsScreen" />
+    }
+    return null
+  }
+
+  const navScreen = screen === 'detail' ? 'home' : screen
+
   return (
     <div className="flex flex-col min-h-svh bg-cream">
       <main className="flex-1 pb-[68px] overflow-y-auto">
@@ -49,12 +67,12 @@ export default function App() {
             transition={{ duration: 0.18 }}
             className="min-h-full"
           >
-            <PlaceholderScreen name={PLACEHOLDER_SCREENS[screen]} />
+            {renderScreen()}
           </motion.div>
         </AnimatePresence>
       </main>
 
-      <BottomNav screen={screen} onNavigate={navigate} />
+      <BottomNav screen={navScreen} onNavigate={navigate} />
     </div>
   )
 }
