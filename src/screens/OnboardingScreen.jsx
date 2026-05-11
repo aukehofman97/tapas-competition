@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 
 const PARTICIPANTS = [
   'Luis', 'Alejandra', 'Auke', 'Ana', 'Fran',
-  'Raquel', 'Maria', 'Mape', 'Ayelen', 'David', 'Andrea',
+  'Raquel', 'Maria', 'Mape', 'Ayelen', 'David', 'Andrea', 'Colau',
 ]
 
 export default function OnboardingScreen({ onComplete }) {
@@ -53,39 +53,29 @@ export default function OnboardingScreen({ onComplete }) {
       </div>
 
       <section className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-widest text-stone-500 mb-3">
+        <label
+          htmlFor="who-select"
+          className="text-xs font-semibold uppercase tracking-widest text-stone-500 mb-3 block"
+        >
           Who are you?
-        </p>
-        <div className="grid grid-cols-3 gap-2">
+        </label>
+        <select
+          id="who-select"
+          value={selectedName ?? ''}
+          onChange={(e) => setSelectedName(e.target.value || null)}
+          className="w-full bg-white border border-cream-dark rounded-2xl px-4 py-3.5 text-base text-stone-800 outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 transition appearance-none"
+          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a8a29e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center' }}
+        >
+          <option value="">Select your name…</option>
           {PARTICIPANTS.map((name) => {
             const taken = registered.includes(name)
-            const selected = selectedName === name
             return (
-              <motion.button
-                key={name}
-                whileTap={taken ? {} : { scale: 0.93 }}
-                disabled={taken}
-                onClick={() => !taken && setSelectedName(name)}
-                className={`
-                  rounded-2xl py-3 px-2 text-sm font-semibold transition-colors
-                  ${taken
-                    ? 'bg-cream-dark text-stone-400 cursor-not-allowed'
-                    : selected
-                    ? 'bg-terracotta text-white shadow-md'
-                    : 'bg-white text-stone-700 border border-cream-dark'
-                  }
-                `}
-              >
-                {name}
-                {taken && (
-                  <span className="block text-xs font-normal text-stone-400 leading-tight">
-                    taken
-                  </span>
-                )}
-              </motion.button>
+              <option key={name} value={name} disabled={taken}>
+                {name}{taken ? ' (taken)' : ''}
+              </option>
             )
           })}
-        </div>
+        </select>
       </section>
 
       <section className="mb-8">
