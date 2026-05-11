@@ -119,18 +119,18 @@ export default function ResultsScreen({ participants, votes, onReset }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-40 flex items-end"
+            className="fixed inset-0 bg-black/50 z-40 flex items-end sm:items-center sm:justify-center p-0 sm:p-6"
             onClick={(e) => e.target === e.currentTarget && setShowConfirm(false)}
           >
             <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
+              initial={{ y: '100%', opacity: 1 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: '100%', opacity: 0 }}
               transition={{ type: 'spring', stiffness: 380, damping: 38 }}
-              className="bg-white w-full rounded-t-3xl px-5 pt-4 pb-10"
+              className="bg-white w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl px-5 pt-4 pb-10 sm:pb-6"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="w-10 h-1 bg-cream-dark rounded-full mx-auto mb-6" />
+              <div className="w-10 h-1 bg-cream-dark rounded-full mx-auto mb-6 sm:hidden" />
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-2xl bg-red/10 flex items-center justify-center">
                   <AlertTriangle size={24} className="text-red" />
