@@ -5,6 +5,7 @@ import confetti from 'canvas-confetti'
 import { supabase } from '../lib/supabase'
 import { rankTapas } from '../lib/scoring'
 import { TAPAS_HIDDEN } from '../lib/config'
+import EditTapaModal from '../components/EditTapaModal'
 
 const BADGE_COLORS = {
   'Most Original': 'bg-olive text-white',
@@ -115,6 +116,7 @@ export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa })
   const [participants, setParticipants] = useState([])
   const [votes, setVotes] = useState([])
   const [loading, setLoading] = useState(true)
+  const [editingTapa, setEditingTapa] = useState(null)
   const prevFirstRef = useRef(null)
 
   useEffect(() => {
@@ -208,7 +210,7 @@ export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa })
                   rank={i + 1}
                   badges={badges[tapa.name]}
                   hidden={isHidden(tapa)}
-                  onPress={() => onNavigateTapa(tapa.name)}
+                  onPress={() => tapa.name === currentUser ? setEditingTapa(tapa) : onNavigateTapa(tapa.name)}
                 />
               ))}
             </div>
@@ -223,12 +225,26 @@ export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa })
                   rank={podium.length + i + 1}
                   badges={badges[tapa.name]}
                   hidden={isHidden(tapa)}
-                  onPress={() => onNavigateTapa(tapa.name)}
+                  onPress={() => tapa.name === currentUser ? setEditingTapa(tapa) : onNavigateTapa(tapa.name)}
                 />
               ))}
             </div>
           )}
         </>
+      )}
+
+      {editingTapa && (
+        <EditTapaModal
+          currentUser={currentUser}
+          currentTapaName={editingTapa.tapa_name}
+          onClose={() => setEditingTapa(null)}
+          onSaved={(newName) => {
+            setParticipants((prev) =>
+              prev.map((p) => p.name === currentUser ? { ...p, tapa_name: newName } : p)
+            )
+            setEditingTapa(null)
+          }}
+        />
       )}
     </div>
   )
