@@ -1,8 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { supabase } from './lib/supabase'
+import { rankTapas, computeBadges } from './lib/scoring'
 import BottomNav from './components/BottomNav'
 import OnboardingScreen from './screens/OnboardingScreen'
 import HomeScreen from './screens/HomeScreen'
+import VoteScreen from './screens/VoteScreen'
+import TapaDetailScreen from './screens/TapaDetailScreen'
 
 function PlaceholderScreen({ name }) {
   return (
@@ -18,6 +22,36 @@ export default function App() {
   )
   const [screen, setScreen] = useState('home')
   const [selectedTapa, setSelectedTapa] = useState(null)
+
+  // Global data for badges (shared across screens)
+  const [participants, setParticipants] = useState([])
+  const [votes, setVotes] = useState([])
+
+  useEffect(() => {
+    if (!currentUser) return
+    supabase.from('participants').select('*').then(({ data }) => { if (data) setParticipants(data) })
+    supabase.from('votes').select('*').then(({ data }) => { if (data) setVotes(data) })
+
+    const sub = supabase
+      .channel('app-votes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'votes' }, (payload) => {
+        setVotes((prev) => {
+          if (payload.eventType === 'INSERT') return [...prev, payload.new]
+          if (payload.eventType === 'UPDATE') return prev.map((v) => v.id === payload.new.id ? payload.new : v)
+          if (payload.eventType === 'DELETE') return prev.filter((v) => v.id !== payload.old.id)
+          return prev
+        })
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'participants' }, (payload) => {
+        setParticipants((prev) => [...prev, payload.new])
+      })
+      .subscribe()
+
+    return () => supabase.removeChannel(sub)
+  }, [currentUser])
+
+  const ranked = rankTapas(participants, votes)
+  const badges = computeBadges(ranked)
 
   function navigate(newScreen, tapa = null) {
     setScreen(newScreen)
@@ -37,15 +71,27 @@ export default function App() {
       return (
         <HomeScreen
           currentUser={currentUser}
+          badges={badges}
           onNavigateTapa={(tapaCreator) => navigate('detail', tapaCreator)}
         />
       )
     }
     if (screen === 'detail') {
-      return <PlaceholderScreen name={`TapaDetail — ${selectedTapa}`} />
+      return (
+        <TapaDetailScreen
+          tapaCreator={selectedTapa}
+          badges={badges}
+          onBack={() => navigate('home')}
+        />
+      )
     }
     if (screen === 'vote') {
-      return <PlaceholderScreen name="VoteScreen" />
+      return (
+        <VoteScreen
+          currentUser={currentUser}
+          onNavigateTapa={(tapaCreator) => navigate('detail', tapaCreator)}
+        />
+      )
     }
     if (screen === 'results') {
       return <PlaceholderScreen name="ResultsScreen" />

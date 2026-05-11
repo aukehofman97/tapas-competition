@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Crown, Star } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import { rankTapas, computeBadges } from '../lib/scoring'
+import { rankTapas } from '../lib/scoring'
 
 const BADGE_COLORS = {
   'Most Original': 'bg-olive text-white',
@@ -97,7 +97,7 @@ function PodiumCard({ tapa, rank, badges, onPress }) {
   )
 }
 
-export default function HomeScreen({ currentUser, onNavigateTapa }) {
+export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa }) {
   const [participants, setParticipants] = useState([])
   const [votes, setVotes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -144,7 +144,6 @@ export default function HomeScreen({ currentUser, onNavigateTapa }) {
   }, [])
 
   const ranked = rankTapas(participants, votes)
-  const badges = computeBadges(ranked)
 
   const podium = ranked.slice(0, 3)
   const rest = ranked.slice(3)
