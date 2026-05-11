@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { categoryAverages, overallScore } from '../lib/scoring'
+import { TAPAS_HIDDEN } from '../lib/config'
 
 const CATEGORIES = [
   { key: 'taste', label: 'Taste', emoji: '👅' },
@@ -57,7 +58,7 @@ function VoterRow({ vote }) {
   )
 }
 
-export default function TapaDetailScreen({ tapaCreator, badges, onBack }) {
+export default function TapaDetailScreen({ tapaCreator, currentUser, badges, onBack }) {
   const [tapa, setTapa] = useState(null)
   const [votes, setVotes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -80,6 +81,7 @@ export default function TapaDetailScreen({ tapaCreator, badges, onBack }) {
     ? votes.reduce((sum, v) => sum + overallScore(v), 0) / votes.length
     : 0
   const tapaBadges = badges?.[tapaCreator] ?? []
+  const hidden = TAPAS_HIDDEN && tapaCreator !== currentUser
 
   if (loading) {
     return (
@@ -111,7 +113,7 @@ export default function TapaDetailScreen({ tapaCreator, badges, onBack }) {
 
       <div className="mb-6">
         <h1 className="font-display text-3xl font-bold text-red leading-tight">
-          {tapa.tapa_name}
+          {hidden ? <span className="blur-sm select-none">{tapa.tapa_name}</span> : tapa.tapa_name}
         </h1>
         <p className="text-stone-500 text-sm mt-1">by {tapa.name}</p>
         {tapaBadges.length > 0 && (

@@ -4,6 +4,7 @@ import { Crown, Star } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import { supabase } from '../lib/supabase'
 import { rankTapas } from '../lib/scoring'
+import { TAPAS_HIDDEN } from '../lib/config'
 
 const BADGE_COLORS = {
   'Most Original': 'bg-olive text-white',
@@ -34,7 +35,16 @@ function BadgePills({ badges }) {
   )
 }
 
-function TapaCard({ tapa, rank, badges, onPress }) {
+function TapaName({ name, hidden }) {
+  if (!hidden) return <span>{name}</span>
+  return (
+    <span className="relative inline-block">
+      <span className="blur-sm select-none">{name}</span>
+    </span>
+  )
+}
+
+function TapaCard({ tapa, rank, badges, onPress, hidden }) {
   return (
     <motion.button
       whileTap={{ scale: 0.97 }}
@@ -45,9 +55,11 @@ function TapaCard({ tapa, rank, badges, onPress }) {
         {rank}
       </span>
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-stone-800 truncate">{tapa.tapa_name}</p>
+        <p className="font-semibold text-stone-800 truncate">
+          <TapaName name={tapa.tapa_name} hidden={hidden} />
+        </p>
         <p className="text-xs text-stone-500 mt-0.5">by {tapa.name}</p>
-        <BadgePills badges={badges} />
+        {!hidden && <BadgePills badges={badges} />}
       </div>
       <div className="flex flex-col items-end shrink-0">
         <ScorePill score={tapa.score} />
@@ -59,7 +71,7 @@ function TapaCard({ tapa, rank, badges, onPress }) {
   )
 }
 
-function PodiumCard({ tapa, rank, badges, onPress }) {
+function PodiumCard({ tapa, rank, badges, onPress, hidden }) {
   const isFirst = rank === 1
   return (
     <motion.button
@@ -80,12 +92,12 @@ function PodiumCard({ tapa, rank, badges, onPress }) {
         <span className="text-xs font-bold text-stone-400 mb-1">#{rank}</span>
       )}
       <p className={`font-bold leading-tight ${isFirst ? 'text-xl' : 'text-sm'}`}>
-        {tapa.tapa_name}
+        <TapaName name={tapa.tapa_name} hidden={hidden} />
       </p>
       <p className={`text-xs mt-0.5 ${isFirst ? 'text-white/70' : 'text-stone-500'}`}>
         by {tapa.name}
       </p>
-      <BadgePills badges={badges} />
+      {!hidden && <BadgePills badges={badges} />}
       <div className="mt-auto pt-3 flex items-baseline gap-1.5">
         <span className={`font-bold tabular-nums ${isFirst ? 'text-2xl text-yellow' : 'text-lg text-terracotta'}`}>
           {tapa.score > 0 ? tapa.score.toFixed(1) : '—'}
@@ -99,6 +111,7 @@ function PodiumCard({ tapa, rank, badges, onPress }) {
 }
 
 export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa }) {
+  function isHidden(tapa) { return TAPAS_HIDDEN && tapa.name !== currentUser }
   const [participants, setParticipants] = useState([])
   const [votes, setVotes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -171,7 +184,11 @@ export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa })
     <div className="px-4 pt-8 pb-4">
       <div className="mb-6">
         <h1 className="font-display text-3xl font-bold text-red leading-tight">Leaderboard 🇪🇸</h1>
-        <p className="text-stone-500 text-sm mt-1">Tap any tapa to see the full breakdown</p>
+        <p className="text-stone-500 text-sm mt-1">
+          {TAPAS_HIDDEN
+            ? 'Tapa names are hidden until the competition begins 🔒'
+            : 'Tap any tapa to see the full breakdown'}
+        </p>
       </div>
 
       {ranked.length === 0 ? (
@@ -190,6 +207,7 @@ export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa })
                   tapa={tapa}
                   rank={i + 1}
                   badges={badges[tapa.name]}
+                  hidden={isHidden(tapa)}
                   onPress={() => onNavigateTapa(tapa.name)}
                 />
               ))}
@@ -204,6 +222,7 @@ export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa })
                   tapa={tapa}
                   rank={podium.length + i + 1}
                   badges={badges[tapa.name]}
+                  hidden={isHidden(tapa)}
                   onPress={() => onNavigateTapa(tapa.name)}
                 />
               ))}

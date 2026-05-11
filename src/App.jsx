@@ -74,6 +74,7 @@ export default function App() {
       return (
         <TapaDetailScreen
           tapaCreator={selectedTapa}
+          currentUser={currentUser}
           badges={badges}
           onBack={() => navigate('home')}
         />

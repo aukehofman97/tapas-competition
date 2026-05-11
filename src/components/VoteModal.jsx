@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { TAPAS_HIDDEN } from '../lib/config'
 
 const CATEGORIES = [
   { key: 'taste', label: 'Taste', emoji: '👅' },
@@ -115,7 +116,7 @@ export default function VoteModal({ tapa, currentUser, existingVote, onClose, on
           <div className="flex items-start justify-between mb-6">
             <div>
               <h2 className="font-display text-xl font-bold text-red leading-tight">
-                {tapa.tapa_name}
+                {TAPAS_HIDDEN ? <span className="blur-sm select-none">{tapa.tapa_name}</span> : tapa.tapa_name}
               </h2>
               <p className="text-sm text-stone-500 mt-0.5">by {tapa.name}</p>
             </div>

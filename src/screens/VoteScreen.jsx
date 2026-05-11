@@ -3,9 +3,10 @@ import { motion } from 'framer-motion'
 import { ChevronRight, CheckCircle2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { tapaScore } from '../lib/scoring'
+import { TAPAS_HIDDEN } from '../lib/config'
 import VoteModal from '../components/VoteModal'
 
-function TapaVoteCard({ tapa, existingVote, onVote, onViewDetail }) {
+function TapaVoteCard({ tapa, existingVote, onVote, onViewDetail, hidden }) {
   const hasVoted = !!existingVote
   const score = tapaScore(existingVote ? [existingVote] : [])
 
@@ -15,7 +16,9 @@ function TapaVoteCard({ tapa, existingVote, onVote, onViewDetail }) {
         onClick={onViewDetail}
         className="flex-1 min-w-0 text-left"
       >
-        <p className="font-semibold text-stone-800 truncate">{tapa.tapa_name}</p>
+        <p className="font-semibold text-stone-800 truncate">
+          {hidden ? <span className="blur-sm select-none">{tapa.tapa_name}</span> : tapa.tapa_name}
+        </p>
         <p className="text-xs text-stone-500 mt-0.5">by {tapa.name}</p>
         {hasVoted && (
           <p className="text-xs text-olive mt-1 font-medium flex items-center gap-1">
@@ -114,6 +117,7 @@ export default function VoteScreen({ currentUser, onNavigateTapa }) {
                 key={tapa.name}
                 tapa={tapa}
                 existingVote={getExistingVote(tapa.name)}
+                hidden={TAPAS_HIDDEN}
                 onVote={() => setModalTapa(tapa)}
                 onViewDetail={() => onNavigateTapa(tapa.name)}
               />
