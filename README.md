@@ -1,16 +1,78 @@
-# React + Vite
+# Tapas Competition
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Mobile-first scoring app for a Spanish tapas competition. 11 participants each register one tapa, then vote on each other's tapas across 5 categories. Live leaderboard updates in real-time across all phones.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 18 + Vite 5
+- Tailwind CSS v4 (`@tailwindcss/vite`)
+- Framer Motion — screen transitions, slide-up modals
+- Supabase — Postgres database + Realtime subscriptions
+- canvas-confetti — fires when the leaderboard #1 changes
 
-## React Compiler
+## Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1. Install dependencies
 
-## Expanding the ESLint configuration
+```bash
+npm install
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 2. Configure Supabase
+
+Copy the example env file and fill in your project credentials:
+
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local`:
+
+```
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Find these in your Supabase dashboard → Project Settings → API.
+
+### 3. Apply the database schema
+
+```bash
+supabase login
+supabase link --project-ref <your-project-ref>
+supabase db push
+```
+
+This creates the `participants` and `votes` tables with RLS policies and Realtime enabled.
+
+### 4. Run locally
+
+```bash
+npm run dev
+```
+
+Open `http://localhost:5173` on each phone (must be on the same network, or deploy to a public URL).
+
+## Deploy
+
+```bash
+npm run build
+```
+
+The `dist/` folder can be hosted on any static host (Netlify, Vercel, GitHub Pages, etc.).
+
+## How it works
+
+1. Each participant selects their name from the fixed list of 11 and enters their tapa name — this registers them.
+2. The app persists the selected name in `localStorage` so refresh doesn't require re-selecting.
+3. From the **Vote** tab, users can rate any tapa except their own across 5 categories (0–10). Votes can be edited at any time.
+4. The **Home** tab shows a live leaderboard ranked by average overall score. The #1 tapa gets a crown and confetti fires when the leader changes.
+5. Tapping any tapa opens a detail view with per-category averages, voter breakdown, and any earned badges.
+6. The **Results** tab allows exporting all scores as JSON and resetting the competition.
+
+## Scoring
+
+- **Overall Experience** = mean of the 5 category scores for a single vote
+- **Tapa total score** = mean of all voters' overall experience scores
+- **Most Original** badge = highest average originality score across all tapas
+- **Best Presentation** badge = highest average presentation score across all tapas

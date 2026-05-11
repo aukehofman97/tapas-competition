@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Crown, Star } from 'lucide-react'
+import confetti from 'canvas-confetti'
 import { supabase } from '../lib/supabase'
 import { rankTapas } from '../lib/scoring'
 
@@ -101,6 +102,7 @@ export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa })
   const [participants, setParticipants] = useState([])
   const [votes, setVotes] = useState([])
   const [loading, setLoading] = useState(true)
+  const prevFirstRef = useRef(null)
 
   useEffect(() => {
     async function loadData() {
@@ -144,6 +146,15 @@ export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa })
   }, [])
 
   const ranked = rankTapas(participants, votes)
+
+  // Fire confetti only when #1 changes to a new leader (not on initial load)
+  const currentFirst = ranked[0]?.name ?? null
+  useEffect(() => {
+    if (currentFirst && prevFirstRef.current && prevFirstRef.current !== currentFirst) {
+      confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ['#C0622A', '#F5C842', '#8B1A1A', '#6B7C3C'] })
+    }
+    prevFirstRef.current = currentFirst
+  }, [currentFirst])
 
   const podium = ranked.slice(0, 3)
   const rest = ranked.slice(3)

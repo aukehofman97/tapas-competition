@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import './App.css'
 import { supabase } from './lib/supabase'
 import { rankTapas, computeBadges } from './lib/scoring'
 import BottomNav from './components/BottomNav'
@@ -7,14 +8,7 @@ import OnboardingScreen from './screens/OnboardingScreen'
 import HomeScreen from './screens/HomeScreen'
 import VoteScreen from './screens/VoteScreen'
 import TapaDetailScreen from './screens/TapaDetailScreen'
-
-function PlaceholderScreen({ name }) {
-  return (
-    <div className="flex-1 flex items-center justify-center text-stone-400 text-lg font-semibold min-h-[60svh]">
-      {name} — coming soon
-    </div>
-  )
-}
+import ResultsScreen from './screens/ResultsScreen'
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(() =>
@@ -94,7 +88,19 @@ export default function App() {
       )
     }
     if (screen === 'results') {
-      return <PlaceholderScreen name="ResultsScreen" />
+      return (
+        <ResultsScreen
+          participants={participants}
+          votes={votes}
+          onReset={() => {
+            setCurrentUser(null)
+            setParticipants([])
+            setVotes([])
+            setScreen('home')
+            setSelectedTapa(null)
+          }}
+        />
+      )
     }
     return null
   }
