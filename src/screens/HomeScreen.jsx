@@ -170,7 +170,7 @@ export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa })
   return (
     <div className="px-4 pt-8 pb-4">
       <div className="mb-6">
-        <h1 className="font-display text-3xl font-bold text-red leading-tight">Leaderboard</h1>
+        <h1 className="font-display text-3xl font-bold text-red leading-tight">Leaderboard 🇪🇸</h1>
         <p className="text-stone-500 text-sm mt-1">Tap any tapa to see the full breakdown</p>
       </div>
 
