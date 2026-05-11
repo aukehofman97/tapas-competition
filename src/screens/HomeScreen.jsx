@@ -111,7 +111,7 @@ function PodiumCard({ tapa, rank, badges, onPress, hidden }) {
   )
 }
 
-export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa }) {
+export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa, onLogout }) {
   function isHidden(tapa) { return TAPAS_HIDDEN && tapa.name !== currentUser }
   const [participants, setParticipants] = useState([])
   const [votes, setVotes] = useState([])
@@ -184,13 +184,22 @@ export default function HomeScreen({ currentUser, badges = {}, onNavigateTapa })
 
   return (
     <div className="px-4 pt-8 pb-4">
-      <div className="mb-6">
-        <h1 className="font-display text-3xl font-bold text-red leading-tight">Leaderboard 🇪🇸</h1>
-        <p className="text-stone-500 text-sm mt-1">
-          {TAPAS_HIDDEN
-            ? 'Tapa names are hidden until the competition begins 🔒'
-            : 'Tap any tapa to see the full breakdown'}
-        </p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="font-display text-3xl font-bold text-red leading-tight">Leaderboard 🇪🇸</h1>
+          <p className="text-stone-500 text-sm mt-1">
+            {TAPAS_HIDDEN
+              ? 'Tapa names are hidden until the competition begins 🔒'
+              : 'Tap any tapa to see the full breakdown'}
+          </p>
+        </div>
+        <button
+          onClick={onLogout}
+          className="shrink-0 ml-3 flex flex-col items-center gap-0.5 text-stone-400 active:text-terracotta transition-colors"
+        >
+          <span className="text-xs font-medium leading-tight">{currentUser}</span>
+          <span className="text-[10px] text-stone-300">log out</span>
+        </button>
       </div>
 
       {ranked.length === 0 ? (

@@ -67,6 +67,12 @@ export default function App() {
           currentUser={currentUser}
           badges={badges}
           onNavigateTapa={(tapaCreator) => navigate('detail', tapaCreator)}
+          onLogout={() => {
+            localStorage.removeItem('tapas_user')
+            setCurrentUser(null)
+            setScreen('home')
+            setSelectedTapa(null)
+          }}
         />
       )
     }
