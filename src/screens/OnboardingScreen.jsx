@@ -48,7 +48,7 @@ export default function OnboardingScreen({ onComplete }) {
           ¡Bienvenidos! 🇪🇸
         </h1>
         <p className="text-stone-600 mt-2 text-base">
-          Select your name and register your tapa to join the competition.
+          The ultimate tapas showdown has come to Amsterdam. Register your creation and let the people decide.
         </p>
       </div>
 
