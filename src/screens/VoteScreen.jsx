@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { ChevronRight, CheckCircle2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { tapaScore } from '../lib/scoring'
-import { TAPAS_HIDDEN } from '../lib/config'
+import { TAPAS_HIDDEN, VOTING_ENABLED } from '../lib/config'
 import VoteModal from '../components/VoteModal'
 
 function TapaVoteCard({ tapa, existingVote, onVote, onViewDetail, hidden }) {
@@ -86,6 +86,16 @@ export default function VoteScreen({ currentUser, onNavigateTapa }) {
       .eq('voter_name', currentUser)
     if (data) setMyVotes(data)
     setModalTapa(null)
+  }
+
+  if (!VOTING_ENABLED) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center min-h-[60svh] px-8 text-center">
+        <span className="text-5xl mb-4">🔒</span>
+        <p className="text-stone-700 font-semibold text-lg">Voting is not open yet</p>
+        <p className="text-stone-400 text-sm mt-1">Come back on competition day!</p>
+      </div>
+    )
   }
 
   if (loading) {

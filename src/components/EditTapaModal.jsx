@@ -32,18 +32,18 @@ export default function EditTapaModal({ currentUser, currentTapaName, onClose, o
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/40 z-40 flex items-end"
+        className="fixed inset-0 bg-black/40 z-40 flex items-end sm:items-center sm:justify-center p-0 sm:p-6"
         onClick={(e) => e.target === e.currentTarget && onClose()}
       >
         <motion.div
-          initial={{ y: '100%' }}
-          animate={{ y: 0 }}
-          exit={{ y: '100%' }}
+          initial={{ y: '100%', opacity: 1 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: '100%', opacity: 0 }}
           transition={{ type: 'spring', stiffness: 380, damping: 38 }}
-          className="bg-white w-full rounded-t-3xl px-5 pt-4 pb-10"
+          className="bg-white w-full sm:max-w-sm sm:rounded-3xl rounded-t-3xl px-5 pt-4 pb-10 sm:pb-6"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="w-10 h-1 bg-cream-dark rounded-full mx-auto mb-5" />
+          <div className="w-10 h-1 bg-cream-dark rounded-full mx-auto mb-5 sm:hidden" />
 
           <div className="flex items-start justify-between mb-6">
             <div>

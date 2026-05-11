@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Home, Vote, Trophy } from 'lucide-react'
+import { VOTING_ENABLED } from '../lib/config'
 
 const TABS = [
   { id: 'home', label: 'Home', icon: Home },
@@ -13,13 +14,14 @@ export default function BottomNav({ screen, onNavigate }) {
       <div className="flex">
         {TABS.map(({ id, label, icon: Icon }) => {
           const active = screen === id
+          const locked = id === 'vote' && !VOTING_ENABLED
           return (
             <button
               key={id}
-              onClick={() => onNavigate(id)}
-              className="flex-1 flex flex-col items-center gap-1 py-3 relative min-h-[56px]"
+              onClick={() => !locked && onNavigate(id)}
+              className={`flex-1 flex flex-col items-center gap-1 py-3 relative min-h-[56px] ${locked ? 'opacity-40' : ''}`}
             >
-              {active && (
+              {active && !locked && (
                 <motion.div
                   layoutId="tab-indicator"
                   className="absolute top-0 left-2 right-2 h-0.5 bg-terracotta rounded-full"
@@ -28,12 +30,10 @@ export default function BottomNav({ screen, onNavigate }) {
               )}
               <Icon
                 size={22}
-                className={active ? 'text-terracotta' : 'text-stone-400'}
-                strokeWidth={active ? 2.5 : 1.8}
+                className={active && !locked ? 'text-terracotta' : 'text-stone-400'}
+                strokeWidth={active && !locked ? 2.5 : 1.8}
               />
-              <span
-                className={`text-xs font-medium ${active ? 'text-terracotta' : 'text-stone-400'}`}
-              >
+              <span className={`text-xs font-medium ${active && !locked ? 'text-terracotta' : 'text-stone-400'}`}>
                 {label}
               </span>
             </button>
