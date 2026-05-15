@@ -1,44 +1,12 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Download, Trash2, AlertTriangle } from 'lucide-react'
+import { Trash2, AlertTriangle } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import { rankTapas, computeBadges } from '../lib/scoring'
 
 export default function ResultsScreen({ participants, votes, onReset }) {
   const [showConfirm, setShowConfirm] = useState(false)
   const [resetting, setResetting] = useState(false)
   const [error, setError] = useState(null)
-
-  function handleExport() {
-    const ranked = rankTapas(participants, votes)
-    const badges = computeBadges(ranked)
-    const payload = {
-      exportedAt: new Date().toISOString(),
-      tapas: ranked.map((t) => ({
-        name: t.name,
-        tapa_name: t.tapa_name,
-        score: t.score,
-        voteCount: t.voteCount,
-        categoryAverages: t.categoryAverages,
-        badges: badges[t.name] ?? [],
-        votes: t.votes.map((v) => ({
-          voter: v.voter_name,
-          taste: v.taste,
-          presentation: v.presentation,
-          originality: v.originality,
-          texture: v.texture,
-          authenticity: v.authenticity,
-        })),
-      })),
-    }
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `tapas-results-${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
 
   async function handleReset() {
     setResetting(true)
@@ -57,34 +25,11 @@ export default function ResultsScreen({ participants, votes, onReset }) {
         <div className="mb-8">
           <h1 className="font-display text-3xl font-bold text-red leading-tight">Results</h1>
           <p className="text-stone-500 text-sm mt-1">
-            Export the final scores or reset for a new competition.
+            Reset when you're ready for a new competition.
           </p>
         </div>
 
         <div className="flex flex-col gap-3 mb-8">
-          <div className="bg-white rounded-2xl px-5 py-5 shadow-sm">
-            <div className="flex items-center gap-3 mb-1">
-              <div className="w-10 h-10 rounded-xl bg-terracotta/10 flex items-center justify-center shrink-0">
-                <Download size={20} className="text-terracotta" />
-              </div>
-              <div>
-                <p className="font-semibold text-stone-800">Export results</p>
-                <p className="text-xs text-stone-500">{participants.length} tapas · {votes.length} votes</p>
-              </div>
-            </div>
-            <p className="text-sm text-stone-500 mb-4 mt-2">
-              Downloads a JSON file with all scores, per-category averages, and individual voter breakdowns.
-            </p>
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              onClick={handleExport}
-              disabled={participants.length === 0}
-              className="w-full rounded-xl py-3 bg-terracotta text-white font-bold text-sm disabled:opacity-40"
-            >
-              Download JSON
-            </motion.button>
-          </div>
-
           <div className="bg-white rounded-2xl px-5 py-5 shadow-sm">
             <div className="flex items-center gap-3 mb-1">
               <div className="w-10 h-10 rounded-xl bg-red/10 flex items-center justify-center shrink-0">
