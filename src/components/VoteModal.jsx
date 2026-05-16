@@ -53,11 +53,11 @@ export default function VoteModal({ tapa, currentUser, existingVote, onClose, on
     authenticity: existingVote?.authenticity ?? 5,
   })
   const [touched, setTouched] = useState({
-    taste: !!existingVote,
-    presentation: !!existingVote,
-    originality: !!existingVote,
-    texture: !!existingVote,
-    authenticity: !!existingVote,
+    taste: true,
+    presentation: true,
+    originality: true,
+    texture: true,
+    authenticity: true,
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
