@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 
 const PARTICIPANTS = [
   'Luis', 'Alejandra', 'Auke', 'Ana', 'Fran',
-  'Raquel', 'Maria', 'Mape', 'Ayelen', 'David', 'Andrea', 'Colau',
+  'Raquel', 'Maria', 'Mape', 'Ayelen', 'David', 'Andrea', 'Colau', 'Richi',
 ]
 
 export default function OnboardingScreen({ onComplete }) {
